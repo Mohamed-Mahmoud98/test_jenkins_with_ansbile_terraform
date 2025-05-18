@@ -30,34 +30,5 @@ pipeline {
                 }
             }
         }
-
-        stage('Prepare SSH Key') {
-            steps {
-                withCredentials([file(credentialsId: 'my-ssh-key-id', variable: 'SSH_KEY')]) {
-                    sh """
-                        mkdir -p ${ANSIBLE_DIR}
-                        cp \$SSH_KEY ${ANSIBLE_DIR}/mykey.pem
-                        chmod 600 ${ANSIBLE_DIR}/mykey.pem
-                    """
-                }
-            }
-        }
-
-        stage('Update Inventory') {
-            steps {
-                script {
-                    def ec2_ip = sh(script: "terraform -chdir=${TF_WORKDIR} output -raw public_ip", returnStdout: true).trim()
-                    writeFile file: "${ANSIBLE_DIR}/inventory.ini", text: "[web]\n${ec2_ip} ansible_user=ec2-user ansible_ssh_private_key_file=mykey.pem\n"
-                }
-            }
-        }
-
-        stage('Run Ansible Playbook') {
-            steps {
-                sh """
-                    ansible-playbook -i ${ANSIBLE_DIR}/inventory.ini ${ANSIBLE_DIR}/playbook.yml --private-key=${ANSIBLE_DIR}/mykey.pem
-                """
-            }
-        }
     }
 }
