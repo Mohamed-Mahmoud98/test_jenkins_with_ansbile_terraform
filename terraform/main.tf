@@ -2,11 +2,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI in us-east-1 (check yours)
+resource "aws_instance" "my_ec2_instance" {
+  ami           = "ami-0c02fb55956c7d316"  # Amazon Linux 2 AMI (for us-east-1)
   instance_type = "t2.micro"
+  key_name      = "mykey"                  # Must match the key name in AWS
 
   tags = {
-    Name = "ExampleInstance"
+    Name = "JenkinsTerraformInstance"
   }
 }
