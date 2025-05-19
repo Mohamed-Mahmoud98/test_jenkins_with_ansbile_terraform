@@ -84,7 +84,7 @@ pipeline {
                     sh '''
                         PUBLIC_IP=$(cat ${PUBLIC_IP_FILE})
                         echo "[ec2_instance]" > ${HOSTS_FILE}
-                        echo "$PUBLIC_IP ansible_user=ec2-user ansible_ssh_private_key_file=$SSH_KEY" >> ${HOSTS_FILE}
+                        echo "$PUBLIC_IP ansible_user=ec2-user ansible_ssh_private_key_file=/home/mohamed/test/mykey.pem" >> ${HOSTS_FILE}
                     '''
                 }
             }
