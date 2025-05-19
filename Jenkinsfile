@@ -72,7 +72,7 @@ pipeline {
         stage('Wait for EC2 to boot') {
             steps {
                 echo 'Waiting for EC2 instance to initialize...'
-                sleep time: 180, unit: 'SECONDS'
+                sleep time: 150, unit: 'SECONDS'
             }
         }
 
@@ -83,7 +83,7 @@ pipeline {
                     sh '''
                         PUBLIC_IP=$(cat ${PUBLIC_IP_FILE})
                         echo "[ec2_instance]" > ${HOSTS_FILE}
-                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=/home/mohamed/test/mykey.pem" >> ${HOSTS_FILE}
+                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=${SSH_KEY}" >> ${HOSTS_FILE}
                     '''
                 }
             }
