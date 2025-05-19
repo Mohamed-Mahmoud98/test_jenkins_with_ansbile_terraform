@@ -56,6 +56,8 @@ pipeline {
 
                         cd terraform
                         terraform apply -auto-approve tfplan
+
+                        terraform destroy -auto-approve #########################
                     '''
                 }
             }
