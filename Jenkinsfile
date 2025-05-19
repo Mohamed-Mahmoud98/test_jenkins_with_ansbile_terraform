@@ -70,6 +70,14 @@ pipeline {
             }
         }
 
+        stage('Wait for EC2 to boot') {
+            steps {
+                echo 'Waiting for EC2 instance to initialize...'
+                sleep time: 60, unit: 'SECONDS'
+            }
+        }
+
+
         stage('Generate hosts.ini') {
             steps {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
