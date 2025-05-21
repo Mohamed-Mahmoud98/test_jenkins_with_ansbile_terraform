@@ -4,7 +4,7 @@ provider "aws" {
 
 # Create a Security Group that allows SSH from anywhere
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh"
+  name        = "allow_ssh2"
   description = "Allow SSH from any IP"
   vpc_id      = data.aws_vpc.default.id  # We need the default VPC
 
