@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 # Create a Security Group that allows SSH from anywhere
-resource "aws_security_group" "allow_ssh" {
+resource "aws_security_group" "allow_ssh2" {
   name        = "allow_ssh"
   description = "Allow SSH from any IP"
   vpc_id      = data.aws_vpc.default.id  # We need the default VPC
@@ -35,7 +35,7 @@ resource "aws_instance" "my_ec2_instance" {
   instance_type = "t2.micro"
   key_name      = "ec2_key"
 
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  vpc_security_group_ids = [aws_security_group.allow_ssh2.id]
 
   tags = {
     Name = "JenkinsTerraformInstance"
