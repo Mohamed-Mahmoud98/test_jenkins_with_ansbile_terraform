@@ -76,7 +76,6 @@ pipeline {
             }
         }
 
-
         stage('Generate hosts.ini') {
             steps {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
@@ -92,7 +91,6 @@ pipeline {
             }
         }
 
-
         stage('Ansible install nginx') {
             steps {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
@@ -103,7 +101,7 @@ pipeline {
                 }
             }
         }
-
+    }
 
     post {
         always {
