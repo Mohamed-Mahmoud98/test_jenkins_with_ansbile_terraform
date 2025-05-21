@@ -81,13 +81,17 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
                     sh '''
+                        echo "Checking SSH key availability..."
+                        ls -l $SSH_KEY
+        
                         PUBLIC_IP=$(cat ${PUBLIC_IP_FILE})
                         echo "[ec2_instance]" > ${HOSTS_FILE}
-                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=/home/mohamed/ansible_test/ec2_key.pem" >> ${HOSTS_FILE}
+                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_KEY ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ${HOSTS_FILE}
                     '''
                 }
             }
         }
+
 
         stage('Ansible install nginx') {
             steps {
