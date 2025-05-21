@@ -96,7 +96,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
                     sh '''
                         echo "Running Ansible with SSH key: $SSH_KEY"
-                        ansible-playbook -i ${HOSTS_FILE} ${ANSIBLE_PLAYBOOK} -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" --private-key $SSH_KEY
+                        ansible-playbook -i ${HOSTS_FILE} ${ANSIBLE_PLAYBOOK}
                     '''
                 }
             }
