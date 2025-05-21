@@ -80,15 +80,14 @@ pipeline {
         stage('Generate hosts.ini') {
             steps {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
-                    sh '''
-                        export ANSIBLE_HOST_KEY_CHECKING=False
+                    sh '''   
                         echo "Copying SSH key for Ansible usage..."
                         cp $SSH_KEY ${LOCAL_SSH_KEY}
                         chmod 400 ${LOCAL_SSH_KEY}
 
                         PUBLIC_IP=$(cat ${PUBLIC_IP_FILE})
                         echo "[ec2_instance]" > ${HOSTS_FILE}
-                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=${LOCAL_SSH_KEY} >> ${HOSTS_FILE}
+                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=${LOCAL_SSH_KEY} ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ${HOSTS_FILE}
                     '''
                 }
             }
