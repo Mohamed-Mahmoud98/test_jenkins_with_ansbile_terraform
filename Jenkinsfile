@@ -89,7 +89,7 @@ pipeline {
             }
         }
 
-        stage('Ansible Ping Test') {
+        stage('Ansible install nginx') {
             steps {
                 sh '''
                     ansible-playbook -i ${HOSTS_FILE} ${ANSIBLE_PLAYBOOK}
