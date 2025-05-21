@@ -6,6 +6,7 @@ pipeline {
         ANSIBLE_PLAYBOOK = 'ansible/playbook.yml'
         PUBLIC_IP_FILE = 'public_ip.txt'
         HOSTS_FILE = 'hosts.ini'
+        LOCAL_SSH_KEY = 'ec2_key.pem'  // The name of the copied key file
     }
 
     stages {
@@ -72,7 +73,7 @@ pipeline {
         stage('Wait for EC2 to boot') {
             steps {
                 echo 'Waiting for EC2 instance to initialize...'
-                sleep time: 200, unit: 'SECONDS'
+                sleep time: 200, unit: 'SECONDS'  // Wait ~3 minutes 20 seconds
             }
         }
 
@@ -80,12 +81,13 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
                     sh '''
-                        echo "Checking SSH key availability..."
-                        ls -l $SSH_KEY
-        
+                        echo "Copying SSH key for Ansible usage..."
+                        cp $SSH_KEY ${LOCAL_SSH_KEY}
+                        chmod 400 ${LOCAL_SSH_KEY}
+
                         PUBLIC_IP=$(cat ${PUBLIC_IP_FILE})
                         echo "[ec2_instance]" > ${HOSTS_FILE}
-                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_KEY ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ${HOSTS_FILE}
+                        echo "$PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=${LOCAL_SSH_KEY} ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ${HOSTS_FILE}
                     '''
                 }
             }
@@ -93,18 +95,18 @@ pipeline {
 
         stage('Ansible install nginx') {
             steps {
-                withCredentials([file(credentialsId: 'EC2_SSH_KEY', variable: 'SSH_KEY')]) {
-                    sh '''
-                        echo "Running Ansible with SSH key: $SSH_KEY"
-                        ansible-playbook -i ${HOSTS_FILE} ${ANSIBLE_PLAYBOOK}
-                    '''
-                }
+                sh '''
+                    echo "Running Ansible playbook..."
+                    ansible-playbook -i ${HOSTS_FILE} ${ANSIBLE_PLAYBOOK}
+                '''
             }
         }
     }
 
     post {
         always {
+            echo 'Cleaning up workspace and SSH key...'
+            sh 'rm -f ${LOCAL_SSH_KEY}'
             cleanWs()
         }
     }
